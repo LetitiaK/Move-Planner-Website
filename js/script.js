@@ -29,11 +29,12 @@ function loadData() {
     });
 
     $.getJSON( url, function(result) {
+      console.log("Load New York Times Articles")
       $nytHeaderElem.text("New York Times Articles about: " + city)
       var items = [];
         $.each(result.response.docs, function( key, val ) {
           items.push( "<li id='article-list'>" + "<a href=' " + val.web_url + " '>" +
-          val.headline.main + "</a><p>" + val.snippet + "</p></a></li>" );
+          val.headline.main + "</a><p>" + val.snippet + "</p></li>" );
         });
         items.push("<ul/>");
         $nytElem.html(items);
@@ -41,16 +42,31 @@ function loadData() {
       $nytHeaderElem.text("New York Times Articles could not be loaded")
     });
 
+    console.log("Load Wikipedia Articles")
     var wikiurl = "https://en.wikipedia.org/w/api.php";
     wikiurl += '?' + $.param({
-      'action' : 'query',
-      'titles' : city,
-      'prop' : 'info',
-      'rvprop' : 'content',
-      'format' : 'json'
-    });
-    console.log("I am here!!")
+      'action' : 'opensearch',
+      'search' : city,
+      'format' : 'json',
+    }) + '&callback=?';
     console.log(wikiurl)
+    $.ajax({
+      method: 'GET',
+      url: wikiurl,
+      dataType: "jsonp",
+      timeout: 8000,
+    }).done(function(result) {
+      var links = [];
+      $.each(result[3], function(key, val) {
+        links.push( "<li id='wikipedia-links'>" + "<a href=' " + val + " '>" +
+        val + "</a></li>" );
+        });
+      links.push("<ul/>");
+      $wikiElem.html(links);
+    }).fail(function(result) {
+      $wikiElem.text("Wikipedia resources could not be loaded. Please try again!");
+    });
+
 
 
     return false;
