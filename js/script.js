@@ -6,6 +6,7 @@ function loadData() {
     var $nytHeaderElem = $('#nytimes-header');
     var $nytElem = $('#nytimes-articles');
     var $greeting = $('#greeting');
+    var $streetview = $('#streetview');
 
     // clear out old data before new request
     $wikiElem.text("");
@@ -20,7 +21,8 @@ function loadData() {
     $greeting.text("So, you want to live at " + address + "?");
 
     var $url = 'http://maps.googleapis.com/maps/api/streetview?size=600x300&location='+ address;
-    $body.append("<img class='bgimg' src=' " + $url + " '>");
+    var img = ["<img src=' " + $url + " '>"];
+    $streetview.html(img);
 
     var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     url += '?' + $.param({
